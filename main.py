@@ -1,14 +1,15 @@
 from ftplib import FTP
 from time import sleep
-import telebot
+#import telebot
 from config import *
 import logging
 
-bot = telebot.TeleBot(TOKEN, threaded=False)
+#bot = telebot.TeleBot(TOKEN, threaded=False)
 ftp = FTP(ip)
 ftp.login(user=userr, passwd=passwrd)
 
 #bot.send_message(id_sms_telegram, 'присоединился к ФТП')
+print("connecting to ftp")
 
 
 def checking():
@@ -17,7 +18,6 @@ def checking():
     first_prev = set(ftp.nlst(dir_anonc))
     sec_prev = set(ftp.nlst(dir_osn))
     while True:
-        bot.infinity_polling()  # test
         first = set(ftp.nlst(dir_anonc))
         add, rem = first - first_prev, first_prev - first
         if add or rem:
@@ -34,16 +34,19 @@ def checking():
 LOG_FILENAME = 'loger.log'
 logging.basicConfig(format='%(asctime)s-%(levelname)s-%(message)s',
                     filename=LOG_FILENAME, level=logging.INFO, encoding='UTF-8')
+logging.info('start bot')
 for add, rem in checking():
     s = ''
     s += ('\n'.join('+ %s' % i for i in add))
     s += ('\n'.join('- %s' % i for i in rem))
-    bot.send_message(id_sms_telegram, s)
+  #  bot.send_message(id_sms_telegram, s)
+    print(s)
 
 for add_sec, rem_sec in checking():
     s = ''
     s += ('\n'.join('+ %s' % i for i in add_sec))
     s += ('\n'.join('- %s' % i for i in rem_sec))
-    bot.send_message(id_sms_telegram, s)
+ #   bot.send_message(id_sms_telegram, s)
+    print(s)
 
 ftp.quit()
